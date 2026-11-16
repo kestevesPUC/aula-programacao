@@ -1,4 +1,4 @@
- using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 public class VeiculoRepo
 {
@@ -20,7 +20,7 @@ public class VeiculoRepo
         Veiculo? veiculos = await _context.veiculos
             .Where(v => v.id == id)
             .FirstOrDefaultAsync();
-            
+
         return veiculos;
     }
 
@@ -28,7 +28,7 @@ public class VeiculoRepo
     {
         this._context.veiculos.Add(veiculo);
 
-        if(await _context.SaveChangesAsync() > 0)
+        if (await _context.SaveChangesAsync() > 0)
         {
             return true;
         }
@@ -38,10 +38,9 @@ public class VeiculoRepo
 
     public async Task<Veiculo> Update(int id, VeiculoUpdateDTO dto)
     {
-        
         Veiculo veiculo = await this.GetById(id);
 
-        if(veiculo == null)
+        if (veiculo == null)
         {
             return null;
         }
@@ -50,9 +49,26 @@ public class VeiculoRepo
         veiculo.modelo = dto.Modelo.Trim();
         veiculo.marca = dto.Marca.Trim();
 
-        await _context.SaveChangesAsync();
+        await this._context.SaveChangesAsync();
 
 
         return veiculo;
     }
+
+    public async Task<bool> Delete(int id)
+    {
+        Veiculo veiculo = await this.GetById(id);
+
+        if (veiculo == null)
+        {
+            return false;
+        }
+
+        this._context.veiculos.Remove(veiculo);
+        
+        await this._context.SaveChangesAsync();
+
+        return true;
+    }
+
 }

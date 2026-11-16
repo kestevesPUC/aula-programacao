@@ -18,6 +18,7 @@ public class VeiculoController : Controller
     {
         List<Veiculo> veiculos = await veiculoRepo.ListAll();
 
+
         return Ok(veiculos);
     }
 
@@ -26,6 +27,11 @@ public class VeiculoController : Controller
     {
         Veiculo veiculos = await veiculoRepo.GetById(id);
 
+        if (veiculos == null)
+        {
+            return NotFound("O veiculo informado não existe.");
+        }
+        
         return Ok(veiculos);
     }
 
@@ -33,6 +39,7 @@ public class VeiculoController : Controller
     public async Task<ActionResult> Create([FromBody] VeiculoRequestDTO request)
     {
         Veiculo veiculo = request.ToEntity();
+
         bool result = await this.veiculoRepo.Create(veiculo);
 
 
@@ -45,15 +52,31 @@ public class VeiculoController : Controller
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> Update(int id, VeiculoUpdateDTO  request)
+    public async Task<ActionResult> Update(int id, VeiculoUpdateDTO request)
     {
         Veiculo veiculo = await this.veiculoRepo.Update(id, request);
 
-        if(veiculo == null)
+        if (veiculo == null)
         {
             return NotFound("O veiculo informado não existe.");
         }
 
         return Ok(veiculo);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+
+        bool result = await this.veiculoRepo.Delete(id);
+
+        if (result)
+        {
+
+            return Ok("Veículo deletado com sucesso!");
+        }
+
+
+        return NotFound("O veiculo informado não existe.");
     }
 }
