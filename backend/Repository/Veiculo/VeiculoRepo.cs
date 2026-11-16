@@ -15,11 +15,11 @@ public class VeiculoRepo
         .ToListAsync();
         return veiculos;
     }
-    public async Task<List<Veiculo>> GetById(int id)
+    public async Task<Veiculo> GetById(int id)
     {
-        List<Veiculo> veiculos = await _context.veiculos
+        Veiculo? veiculos = await _context.veiculos
             .Where(v => v.id == id)
-            .ToListAsync();
+            .FirstOrDefaultAsync();
             
         return veiculos;
     }
@@ -34,5 +34,25 @@ public class VeiculoRepo
         }
 
         return false;
+    }
+
+    public async Task<Veiculo> Update(int id, VeiculoUpdateDTO dto)
+    {
+        
+        Veiculo veiculo = await this.GetById(id);
+
+        if(veiculo == null)
+        {
+            return null;
+        }
+
+        veiculo.placa = dto.Placa.Trim();
+        veiculo.modelo = dto.Modelo.Trim();
+        veiculo.marca = dto.Marca.Trim();
+
+        await _context.SaveChangesAsync();
+
+
+        return veiculo;
     }
 }

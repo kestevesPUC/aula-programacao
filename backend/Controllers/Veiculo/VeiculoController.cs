@@ -24,17 +24,17 @@ public class VeiculoController : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult> GetById(int id)
     {
-        List<Veiculo> veiculos = await veiculoRepo.GetById(id);
+        Veiculo veiculos = await veiculoRepo.GetById(id);
 
         return Ok(veiculos);
     }
 
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] VeiculoRequestDTO request)
-    {   
+    {
         Veiculo veiculo = request.ToEntity();
         bool result = await this.veiculoRepo.Create(veiculo);
-        
+
 
         if (result)
         {
@@ -42,5 +42,18 @@ public class VeiculoController : Controller
         }
 
         return Ok("Não foi possível cadastrar o veículo.");
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, VeiculoUpdateDTO  request)
+    {
+        Veiculo veiculo = await this.veiculoRepo.Update(id, request);
+
+        if(veiculo == null)
+        {
+            return NotFound("O veiculo informado não existe.");
+        }
+
+        return Ok(veiculo);
     }
 }
